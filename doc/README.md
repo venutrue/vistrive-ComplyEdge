@@ -1,7 +1,7 @@
-# vistrive-ComplyEdge
+# vistrive-ComplyEdge Docs
 
 Discovery artifacts for building a multi-tenant Indian labour code compliance SaaS are documented in:
 
-- `doc/DISCOVERY_AND_LLM_PROMPT.md`
+- `DISCOVERY_AND_LLM_PROMPT.md`
 
-This repository currently contains reference PDFs across the four major labour codes and draft rules.
+Reference source PDFs are available in the repository `references/` folder.
