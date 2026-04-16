@@ -9,3 +9,8 @@ This repository is organized into:
 ## Quick links
 - Discovery document: [`doc/DISCOVERY_AND_LLM_PROMPT.md`](doc/DISCOVERY_AND_LLM_PROMPT.md)
 - Docs index: [`doc/README.md`](doc/README.md)
+Discovery artifacts for building a multi-tenant Indian labour code compliance SaaS are documented in:
+
+- `DISCOVERY_AND_LLM_PROMPT.md`
+
+This repository currently contains reference PDFs across the four major labour codes and draft rules.
