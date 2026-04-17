@@ -1,16 +1,41 @@
-# vistrive-ComplyEdge
+# ComplyEdge
 
-This repository is organized into:
+ComplyEdge is a multi-tenant compliance SaaS platform for Indian labour code obligations.
 
-- `doc/` — discovery and planning documentation
-  - `doc/DISCOVERY_AND_LLM_PROMPT.md`
-- `references/` — source PDF reference material for the four Indian labour codes and related guidance
+## Current Status
+This repository now includes an initial **FastAPI backend scaffold** with:
+- API server bootstrapping
+- Health endpoint
+- Tenant onboarding stub endpoint
+- PostgreSQL + Redis local runtime via Docker Compose
 
-## Quick links
-- Discovery document: [`doc/DISCOVERY_AND_LLM_PROMPT.md`](doc/DISCOVERY_AND_LLM_PROMPT.md)
-- Docs index: [`doc/README.md`](doc/README.md)
-Discovery artifacts for building a multi-tenant Indian labour code compliance SaaS are documented in:
+## Quick Start
+1. Copy environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+2. Start local stack:
+   ```bash
+   docker compose up --build
+   ```
+3. Open API docs:
+   - Swagger UI: http://localhost:8000/docs
+   - Health: http://localhost:8000/api/v1/health
 
-- `DISCOVERY_AND_LLM_PROMPT.md`
+## API Endpoints (initial)
+- `GET /api/v1/health`
+- `POST /api/v1/tenants`
 
-This repository currently contains reference PDFs across the four major labour codes and draft rules.
+Example tenant payload:
+```json
+{
+  "legal_name": "Acme Manufacturing India Pvt Ltd",
+  "primary_contact_email": "compliance@acme.example"
+}
+```
+
+## Next Implementation Milestones
+- Database models and migrations (tenant/legal entity/establishment)
+- RBAC and auth (SSO + MFA hooks)
+- Rule catalog ingestion and applicability engine
+- Task/calendar orchestration and audit trail
