@@ -1,0 +1,33 @@
+services:
+  api:
+    build:
+      context: ./backend
+    container_name: complyedge-api
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:17
+    container_name: complyedge-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-complyedge}
+      POSTGRES_USER: ${POSTGRES_USER:-complyedge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-complyedge}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: complyedge-redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  pgdata:
