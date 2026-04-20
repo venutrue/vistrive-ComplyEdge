@@ -16,6 +16,7 @@ def create_role(
     _: Principal = Depends(require_roles("Compliance Admin", "Super Admin")),
     db: Session = Depends(get_db),
 ) -> RoleResponse:
+def create_role(payload: RoleCreateRequest, db: Session = Depends(get_db)) -> RoleResponse:
     role = Role(name=payload.name)
     db.add(role)
     db.commit()
@@ -32,6 +33,7 @@ def create_user(
     if payload.tenant_id != principal.tenant_id:
         raise HTTPException(status_code=403, detail="Cannot create user for another tenant")
 
+def create_user(payload: UserCreateRequest, db: Session = Depends(get_db)) -> UserResponse:
     tenant = db.query(Tenant).filter(Tenant.id == payload.tenant_id).first()
     if not tenant:
         raise HTTPException(status_code=404, detail="Tenant not found")

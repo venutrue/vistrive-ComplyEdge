@@ -19,6 +19,7 @@ def create_notification(
     if payload.tenant_id != principal.tenant_id:
         raise HTTPException(status_code=403, detail="Cannot create notification for another tenant")
 
+def create_notification(payload: NotificationCreateRequest, db: Session = Depends(get_db)) -> NotificationResponse:
     tenant = db.query(Tenant).filter(Tenant.id == payload.tenant_id).first()
     if not tenant:
         raise HTTPException(status_code=404, detail="Tenant not found")
@@ -52,6 +53,11 @@ def send_notification(
     if notification.tenant_id != principal.tenant_id:
         raise HTTPException(status_code=403, detail="Tenant mismatch")
 
+@router.post("/{notification_id}/send", response_model=NotificationResponse)
+def send_notification(notification_id: str, db: Session = Depends(get_db)) -> NotificationResponse:
+    notification = db.query(Notification).filter(Notification.id == notification_id).first()
+    if not notification:
+        raise HTTPException(status_code=404, detail="Notification not found")
     notification.status = "sent"
     db.commit()
     db.refresh(notification)

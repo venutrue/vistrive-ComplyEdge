@@ -22,12 +22,15 @@ from app.api.routes import (
 from app.core.config import get_settings
 from app.db.session import engine
 from app.models import Base
+from app.api.routes import health, tenants
+from app.core.config import get_settings
 
 settings = get_settings()
 
 app = FastAPI(
     title=settings.app_name,
     version="0.5.0",
+    version="0.4.0",
     debug=settings.debug,
     description="ComplyEdge multi-tenant compliance platform API.",
 )
@@ -62,3 +65,10 @@ app.include_router(dashboard.router, prefix=settings.api_prefix)
 app.include_router(inspections.router, prefix=settings.api_prefix)
 app.include_router(payroll.router, prefix=settings.api_prefix)
 app.include_router(copilot.router, prefix=settings.api_prefix)
+    version="0.1.0",
+    debug=settings.debug,
+    description="ComplyEdge multi-tenant compliance platform API (FastAPI scaffold).",
+)
+
+app.include_router(health.router, prefix=settings.api_prefix)
+app.include_router(tenants.router, prefix=settings.api_prefix)

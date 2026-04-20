@@ -7,6 +7,14 @@ def test_health(client):
 
 
 def test_end_to_end_platform_flow(client):
+    login_resp = client.post("/api/v1/auth/login", json={"email": "admin@acme.test"})
+    assert login_resp.status_code == 200
+    assert login_resp.json()["mfa_required"] is True
+
+    mfa_resp = client.post("/api/v1/auth/mfa/verify", json={"email": "admin@acme.test", "otp_code": "123456"})
+    assert mfa_resp.status_code == 200
+    assert mfa_resp.json()["verified"] is True
+
     tenant_resp = client.post(
         "/api/v1/tenants",
         json={"legal_name": "Acme India Pvt Ltd", "primary_contact_email": "admin@acme.test"},
@@ -25,6 +33,7 @@ def test_end_to_end_platform_flow(client):
     assert mfa_resp.json()["verified"] is True
 
     role_resp = client.post("/api/v1/users/roles", json={"name": "Compliance Admin"}, headers=headers)
+    role_resp = client.post("/api/v1/users/roles", json={"name": "Compliance Admin"})
     assert role_resp.status_code == 201
     role_id = role_resp.json()["id"]
 
@@ -62,6 +71,7 @@ def test_end_to_end_platform_flow(client):
     establishment_id = establishment_resp.json()["id"]
 
     reg = client.post("/api/v1/rules/regulations", json={"code_name": "Code on Wages"}, headers=headers)
+    reg = client.post("/api/v1/rules/regulations", json={"code_name": "Code on Wages"})
     regulation_id = reg.json()["id"]
 
     rule = client.post(
@@ -85,6 +95,9 @@ def test_end_to_end_platform_flow(client):
     )
 
     gen = client.post("/api/v1/tasks/generate", json={"establishment_id": establishment_id}, headers=headers)
+    )
+
+    gen = client.post("/api/v1/tasks/generate", json={"establishment_id": establishment_id})
     assert gen.status_code == 201
 
     filing = client.post(
@@ -106,6 +119,10 @@ def test_end_to_end_platform_flow(client):
         json={"establishment_id": establishment_id, "title": "Inspector notice"},
         headers=headers,
     )
+    )
+    assert ev.status_code == 201
+
+    notice = client.post("/api/v1/notices", json={"establishment_id": establishment_id, "title": "Inspector notice"})
     assert notice.status_code == 201
 
     incident = client.post(
@@ -131,6 +148,9 @@ def test_end_to_end_platform_flow(client):
         headers=headers,
     )
     assert payroll.status_code == 200
+    )
+    assert payroll.status_code == 200
+    assert payroll.json()["compliant"] is True
 
     notification = client.post(
         "/api/v1/notifications",
@@ -153,6 +173,14 @@ def test_end_to_end_platform_flow(client):
     assert bundle.status_code == 200
 
     dashboard = client.get("/api/v1/dashboard/summary", headers=headers)
+    sent = client.post(f"/api/v1/notifications/{notification_id}/send")
+    assert sent.status_code == 200
+    assert sent.json()["status"] == "sent"
+
+    bundle = client.get(f"/api/v1/inspections/{establishment_id}/bundle")
+    assert bundle.status_code == 200
+
+    dashboard = client.get("/api/v1/dashboard/summary")
     assert dashboard.status_code == 200
 
     copilot = client.post(

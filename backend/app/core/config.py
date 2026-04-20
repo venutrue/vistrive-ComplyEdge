@@ -11,6 +11,10 @@ class Settings(BaseSettings):
 
     api_prefix: str = "/api/v1"
     database_url_override: str | None = Field(default=None, alias="DATABASE_URL")
+    app_env: str = Field(default="dev", pattern="^(dev|staging|prod)$")
+    debug: bool = True
+
+    api_prefix: str = "/api/v1"
 
     postgres_host: str = "localhost"
     postgres_port: int = 5432
@@ -31,6 +35,10 @@ class Settings(BaseSettings):
         if self.database_url_override:
             return self.database_url_override
 
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+
+    @property
+    def database_url(self) -> str:
         return (
             f"postgresql+psycopg://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
