@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.api.deps import Principal, get_current_principal
 from app.db.session import get_db
 from app.models import Tenant
 from app.schemas.tenant import TenantCreateRequest, TenantResponse
@@ -29,6 +30,12 @@ def create_tenant(payload: TenantCreateRequest, db: Session = Depends(get_db)) -
 
 
 @router.get("", response_model=list[TenantResponse])
+def list_tenants(
+    principal: Principal = Depends(get_current_principal),
+    db: Session = Depends(get_db),
+) -> list[TenantResponse]:
+    tenants = db.query(Tenant).filter(Tenant.id == principal.tenant_id).order_by(Tenant.created_at.desc()).all()
+    return [TenantResponse.model_validate(t) for t in tenants]
 def list_tenants(db: Session = Depends(get_db)) -> list[TenantResponse]:
     tenants = db.query(Tenant).order_by(Tenant.created_at.desc()).all()
     return [TenantResponse.model_validate(t) for t in tenants]

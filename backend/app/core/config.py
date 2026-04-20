@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     postgres_db: str = "complyedge"
 
     redis_url: str = "redis://localhost:6379/0"
+    auth_secret_key: str = "change-me-in-production"
+    mfa_static_otp: str = "123456"
+    access_token_minutes: int = 60
+    cors_origins: str = "http://localhost:3000"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore", populate_by_name=True)
 
@@ -39,6 +43,10 @@ class Settings(BaseSettings):
             f"postgresql+psycopg://{self.postgres_user}:{self.postgres_password}"
             f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
         )
+
+    @property
+    def cors_origins_list(self) -> list[str]:
+        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
 
 @lru_cache

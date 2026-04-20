@@ -1,8 +1,13 @@
+from typing import Optional
+
 from app.schemas.common import APIModel
 
 
 class LoginRequest(APIModel):
     email: str
+    tenant_id: Optional[str] = None
+    role: str = "Compliance Admin"
+    remember_device: bool = False
 
 
 class LoginResponse(APIModel):
