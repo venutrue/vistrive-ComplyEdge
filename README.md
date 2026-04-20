@@ -9,13 +9,14 @@ ComplyEdge is a multi-tenant compliance SaaS platform for Indian labour code obl
 - Applicability-driven compliance task generation
 - Filings/evidence APIs
 - Notices and incidents APIs
-- Notification queue/send APIs
+- Notification queue/send/list APIs
 - Inspection packet summary API
 - Payroll validation API
 - Dashboard summary API
 - AI copilot (citations + mandatory human review signal)
 - Auth login + MFA verify endpoints (baseline)
 - Tenant isolation guardrails via `X-Tenant-ID` + bearer token validation for protected paths
+- CORS middleware and token TTL configuration
 
 ## Quick Start
 1. `cp .env.example .env`
@@ -44,5 +45,4 @@ python -m pytest -q
 - `backend/migrations/0001_initial_schema.sql` contains an explicit starter DDL script for controlled deployment environments.
 
 ## Notes
-This codebase now includes broad multi-module backend coverage and tenant guardrails.
-For full production rollout, continue hardening with OIDC/SAML integration, dynamic MFA, full migration lifecycle (Alembic revisions), async workers, object-storage adapter, observability, and frontend implementation.
+This branch resolves merge-sensitive files by consolidating tenant-guardrail + auth + dashboard + config updates into one coherent baseline.

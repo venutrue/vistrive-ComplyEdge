@@ -31,6 +31,15 @@ def create_notification(
     return NotificationResponse.model_validate(notification)
 
 
+@router.get("", response_model=list[NotificationResponse])
+def list_notifications(
+    principal: Principal = Depends(get_current_principal),
+    db: Session = Depends(get_db),
+) -> list[NotificationResponse]:
+    notifications = db.query(Notification).filter(Notification.tenant_id == principal.tenant_id).all()
+    return [NotificationResponse.model_validate(n) for n in notifications]
+
+
 @router.post("/{notification_id}/send", response_model=NotificationResponse)
 def send_notification(
     notification_id: str,

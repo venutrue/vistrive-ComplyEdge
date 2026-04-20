@@ -45,3 +45,12 @@ def create_user(
     db.refresh(user)
     log_event(db, "system", "user", user.id, "created", payload.model_dump())
     return UserResponse.model_validate(user)
+
+
+@router.get("", response_model=list[UserResponse])
+def list_users(
+    principal: Principal = Depends(get_current_principal),
+    db: Session = Depends(get_db),
+) -> list[UserResponse]:
+    users = db.query(User).filter(User.tenant_id == principal.tenant_id).all()
+    return [UserResponse.model_validate(u) for u in users]

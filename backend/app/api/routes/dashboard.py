@@ -18,14 +18,22 @@ def get_dashboard_summary(
 ) -> DashboardSummary:
     today = date.today()
 
-    legal_entity_ids = [e.id for e in db.query(LegalEntity).filter(LegalEntity.tenant_id == principal.tenant_id).all()]
-    establishment_ids = [
-        e.id for e in db.query(Establishment).filter(Establishment.legal_entity_id.in_(legal_entity_ids)).all()
-    ] if legal_entity_ids else []
+    legal_entity_ids = [
+        e.id for e in db.query(LegalEntity).filter(LegalEntity.tenant_id == principal.tenant_id).all()
+    ]
+    establishment_ids = (
+        [e.id for e in db.query(Establishment).filter(Establishment.legal_entity_id.in_(legal_entity_ids)).all()]
+        if legal_entity_ids
+        else []
+    )
 
     total_tenants = db.query(Tenant).filter(Tenant.id == principal.tenant_id).count()
     total_establishments = len(establishment_ids)
-    total_tasks = db.query(ComplianceTask).filter(ComplianceTask.establishment_id.in_(establishment_ids)).count() if establishment_ids else 0
+    total_tasks = (
+        db.query(ComplianceTask).filter(ComplianceTask.establishment_id.in_(establishment_ids)).count()
+        if establishment_ids
+        else 0
+    )
     overdue_tasks = (
         db.query(ComplianceTask)
         .filter(ComplianceTask.establishment_id.in_(establishment_ids), ComplianceTask.due_date < today)
@@ -33,8 +41,20 @@ def get_dashboard_summary(
         if establishment_ids
         else 0
     )
-    open_notices = db.query(Notice).filter(Notice.establishment_id.in_(establishment_ids), Notice.status == "open").count() if establishment_ids else 0
-    draft_filings = db.query(Filing).filter(Filing.establishment_id.in_(establishment_ids), Filing.status == "draft").count() if establishment_ids else 0
+    open_notices = (
+        db.query(Notice)
+        .filter(Notice.establishment_id.in_(establishment_ids), Notice.status == "open")
+        .count()
+        if establishment_ids
+        else 0
+    )
+    draft_filings = (
+        db.query(Filing)
+        .filter(Filing.establishment_id.in_(establishment_ids), Filing.status == "draft")
+        .count()
+        if establishment_ids
+        else 0
+    )
 
     return DashboardSummary(
         total_tenants=total_tenants,

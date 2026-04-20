@@ -19,4 +19,9 @@ def health_check(db: Session = Depends(get_db)) -> HealthResponse:
     except Exception:
         database = "down"
 
-    return HealthResponse(status="ok", service=settings.app_name, environment=settings.app_env, database=database)
+    return HealthResponse(
+        status="ok",
+        service=settings.app_name,
+        environment=settings.app_env,
+        database=database,
+    )
