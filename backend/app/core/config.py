@@ -6,6 +6,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     app_name: str = "ComplyEdge API"
+    app_env: str = Field(default="dev", pattern="^(dev|staging|prod|test)$")
+    debug: bool = True
+
+    api_prefix: str = "/api/v1"
+    database_url_override: str | None = Field(default=None, alias="DATABASE_URL")
     app_env: str = Field(default="dev", pattern="^(dev|staging|prod)$")
     debug: bool = True
 
@@ -18,6 +23,13 @@ class Settings(BaseSettings):
     postgres_db: str = "complyedge"
 
     redis_url: str = "redis://localhost:6379/0"
+
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore", populate_by_name=True)
+
+    @property
+    def database_url(self) -> str:
+        if self.database_url_override:
+            return self.database_url_override
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
