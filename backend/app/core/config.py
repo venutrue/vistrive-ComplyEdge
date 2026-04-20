@@ -1,0 +1,40 @@
+from functools import lru_cache
+
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    app_name: str = "ComplyEdge API"
+    app_env: str = Field(default="dev", pattern="^(dev|staging|prod|test)$")
+    debug: bool = True
+
+    api_prefix: str = "/api/v1"
+    database_url_override: str | None = Field(default=None, alias="DATABASE_URL")
+
+    postgres_host: str = "localhost"
+    postgres_port: int = 5432
+    postgres_user: str = "complyedge"
+    postgres_password: str = "complyedge"
+    postgres_db: str = "complyedge"
+
+    redis_url: str = "redis://localhost:6379/0"
+    auth_secret_key: str = "change-me-in-production"
+    mfa_static_otp: str = "123456"
+
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore", populate_by_name=True)
+
+    @property
+    def database_url(self) -> str:
+        if self.database_url_override:
+            return self.database_url_override
+
+        return (
+            f"postgresql+psycopg://{self.postgres_user}:{self.postgres_password}"
+            f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
+        )
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
