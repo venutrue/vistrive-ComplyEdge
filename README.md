@@ -1,16 +1,32 @@
-# vistrive-ComplyEdge
+# ComplyEdge
 
-This repository is organized into:
+ComplyEdge is a multi-tenant compliance SaaS platform for Indian labour code obligations.
 
-- `doc/` — discovery and planning documentation
-  - `doc/DISCOVERY_AND_LLM_PROMPT.md`
-- `references/` — source PDF reference material for the four Indian labour codes and related guidance
+## Current Backend Coverage
+- Tenant, legal-entity, establishment hierarchy
+- Roles/users (RBAC baseline)
+- Regulations, rules, obligation templates
+- Applicability-driven compliance task generation
+- Filings/evidence APIs
+- Notices and incidents APIs
+- Notification queue/send APIs
+- Inspection packet summary API
+- Payroll validation API
+- Dashboard summary API
+- AI copilot (citations + mandatory human review signal)
+- Auth login + MFA verify endpoints (baseline)
 
-## Quick links
-- Discovery document: [`doc/DISCOVERY_AND_LLM_PROMPT.md`](doc/DISCOVERY_AND_LLM_PROMPT.md)
-- Docs index: [`doc/README.md`](doc/README.md)
-Discovery artifacts for building a multi-tenant Indian labour code compliance SaaS are documented in:
+## Quick Start
+1. `cp .env.example .env`
+2. `docker compose up --build`
+3. Open `http://localhost:8000/docs`
 
-- `DISCOVERY_AND_LLM_PROMPT.md`
+## Run Tests
+```bash
+cd backend
+python -m pytest -q
+```
 
-This repository currently contains reference PDFs across the four major labour codes and draft rules.
+## Notes
+This codebase is now significantly beyond scaffold and covers broad domain modules.
+For production readiness, continue hardening with enterprise auth providers, migrations lifecycle, async worker orchestration, storage integrations, and frontend implementation.
